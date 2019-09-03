@@ -45,16 +45,17 @@ class Sensor_Moisture(Sensor):
     dry:        1.55
     wet:        1.9
     """
-    def __init__(self,ADS,configFile):
-        super().__init__(ADS,configFile,name='moisture')
+    def __init__(self,ADS,configFile,name='moisture'):
+        super().__init__(ADS,configFile,name)
         self.setup()
     def setup(self):
-        self.thresh = self.load_thresh()
-    def load_thresh(self):
+        self.thresh = self.load_param(param='thresh')
+        self.offset = self.load_param(param='offset')
+    def load_param(self,param):
         with open(self.configFile,'r') as fp:
             configDict = json.loads(fp.read())
-            thresh = float(configDict.get(self.name+'_thresh',0))
-            return thresh
+            val = float(configDict.get(self.name+'_'+param,0))
+            return val
 
 class Sensor_Light(Sensor):
     """

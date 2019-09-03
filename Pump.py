@@ -4,7 +4,8 @@ import json
 class Pump ():
     def __init__ (self,configFile):
         self.configFile = configFile
-        self.load()
+        self.pump_pin = self.load_param(param='pump_pin')
+        self.pump_dur = self.load_param(param='pump_dur')
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.pump_pin,GPIO.OUT,initial=GPIO.HIGH)
     def trigger(self,dur=3):
@@ -13,7 +14,8 @@ class Pump ():
         GPIO.output(self.pump_pin,GPIO.HIGH)
     def cleanup(self):
         GPIO.cleanup()
-    def load(self):
+    def load_param(self,param):
         with open(self.configFile,'r') as fp:
             configDict = json.loads(fp.read())
-            self.pump_pin = int(configDict.get('pump_pin',4))
+            val = int(configDict.get(param,0))
+            return val
