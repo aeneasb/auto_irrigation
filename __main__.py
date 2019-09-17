@@ -29,8 +29,11 @@ def main():
         #temp= Sensor_Temperature(ads,configFile)
         light = Sensor_Light(ads,configFile)
         pump = Pump(configFile) #Pump object
-        ruler = Coffee(wat,moi,moi2,light,pump)
-        schedule.every(60).minutes.do(ruler.run) 
+        ruler = Coffee(wat,moi,moi2,light,pump,configFile)
+        schedule.every().day.at("06:30").do(ruler.shower) 
+        schedule.every().day.at("20:30").do(ruler.shower)
+        schedule.every(30).minutes.do(ruler.measure)
+        schedule.every().friday.at("12:00").do(ruler.rainstorm)
     except Exception as anError:
         print('Unexpected error at start up')
         raise anError
@@ -40,8 +43,7 @@ def main():
         while True:
             try:
                 schedule.run_pending()
-                print('working')
-                time.sleep(10*60)
+                time.sleep(1)
             except KeyboardInterrupt:
                 exit(0)
     except Exception as anError:
