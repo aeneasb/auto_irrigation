@@ -1,32 +1,28 @@
-import time
+import schedule
 class Coffee():
-    def __init__(self,wat,moi,moi2,light,pump,configFile):
+    '''
+    Coffee class, which defines functions specific to the irrigation of a
+    coffee plant
+    Args:
+        wat,moi,moi2,light: All sensor objects used by the coffee class
+        pump: pump object
+        configFile: .json file with parameters
+    Returns:
+        Coffee object
+    '''
+    def __init__(self,pump,configFile):
         self.configFile = configFile
-        self.wat = wat
-        self.moi = moi
-        self.moi2 = moi2
-        self.light = light
         self.pump = pump
-        self.shower_dur = self.load_param(param='shower_dur')
-        self.rainstorm_dur= self.load_param(param='rainstorm_dur')
+        self.shower_dur = int(configFile.get('shower_dur',0))
+        self.rainstorm_dur= int(configFile.get('rainstorm_dur',0))
     def shower(self):
         print('shower')
         self.pump.trigger(dur=self.shower_dur)
     def rainstorm(self):
         print('water that plant!')
         self.pump.trigger(dur=self.rainstorm_dur)
-    def measure(self):
-        # Todo: Load data into database
-        #Check water level
-        print('water_level:'+str(self.wat.sensor.voltage))
-        #Check light
-        print('light_level:'+str(self.light.sensor.voltage))
-        #Measure moisture and trigger pump
-        m=(self.moi.sensor.voltage+self.moi.offset
-           +self.moi2.sensor.voltage+self.moi2.offset)/2
-        print('moisture_level: {0:.2f}'.format(m))
-    def load_param(self,param):
-        with open(self.configFile,'r') as fp:
-            configDict = json.loads(fp.read())
-            val = int(configDict.get(param,0))
-            return val
+    def start_schedule(self):
+        schedule.every().day.at("06:30").do(self.shower) 
+        schedule.every().day.at("20:30").do(self.shower)
+        schedule.every().friday.at("12:00").do(self.rainstorm)
+        schedule.every().tuesday.at("12:00").do(self.rainstorm)
