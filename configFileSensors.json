@@ -1,0 +1,1 @@
+{"water_chan":0,"moisture_chan":1,"light_chan":3,"moisture2_chan":2,"water_thresh":0.7,"moisture_thresh":1.65,"moisture_offset":0,"moisture2_offset":0.3,"light_thresh":0.3,"temperature_thresh":0,"db_path":"./history/coffee.db","poll_freq":300}
